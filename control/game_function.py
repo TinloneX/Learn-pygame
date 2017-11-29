@@ -97,6 +97,7 @@ def __check_play_button(settings, screen, ship, bullets, aliens, stats, btn_play
 def __play_game(settings, screen, ship, bullets, aliens, stats):
     stats.game_active = True
     stats.reset_stats()
+    settings.reset_speed()
     reload_game(settings, screen, ship, bullets, aliens)
     pygame.mouse.set_visible(False)
 
@@ -130,20 +131,27 @@ def __event_key_up(event, ship):
         ship.moving_lift = False
 
 
-def update_bullets(settings, screen, ship, bullets, aliens):
+def update_bullets(settings, screen, ship, bullets, aliens, stats, score_board):
     """处理移除屏幕外的子弹"""
     bullets.update()
     for bullet in bullets.copy():
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
-    check_aliens_gone(settings, screen, ship, bullets, aliens)
+    check_aliens_gone(settings, screen, ship, bullets, aliens, stats, score_board)
 
 
-def check_aliens_gone(settings, screen, ship, bullets, aliens):
+def check_aliens_gone(settings, screen, ship, bullets, aliens, stats, score_board):
     """处理子弹和外星人的碰撞"""
-    pygame.sprite.groupcollide(bullets, aliens, True, True)
+    collide = pygame.sprite.groupcollide(bullets, aliens, True, True)
+
+    if collide:
+        for als in collide.values():
+            stats.score += settings.alien_score * len(als)
+            score_board.prep_score()
+
     if len(aliens) == 0:
         bullets.empty()
+        settings.increase_speed()
         filled_aliens(settings, screen, ship, aliens)
 
 
@@ -187,7 +195,7 @@ def check_aliens_bottom(settings, stats, screen, ship, bullets, aliens):
             break
 
 
-def update_screen(settings, screen, ship, bullets, aliens, stats, btn_play_or_pause):
+def update_screen(settings, screen, ship, bullets, aliens, stats, btn_play_or_pause, score_board_now):
     """更新屏幕上的图像，并切换到新的屏幕"""
     screen.fill(settings.bg_color)
     for bullet in bullets.sprites():
@@ -195,6 +203,7 @@ def update_screen(settings, screen, ship, bullets, aliens, stats, btn_play_or_pa
     # 绘制飞船
     ship.draw()
     aliens.draw(screen)
+    score_board_now.show_score()
     if not stats.game_active:
         btn_play_or_pause.draw()
     # 让最近绘制的屏幕可见

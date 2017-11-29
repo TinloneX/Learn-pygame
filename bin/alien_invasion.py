@@ -10,6 +10,7 @@ from bean.ship import Ship
 import control.game_function as gf
 from config.stats import GameStats
 from widget.button import Button
+from widget.scoreboard import ScoreBoard
 
 
 def run_game():
@@ -24,15 +25,16 @@ def run_game():
     aliens = Group()
     gf.filled_aliens(settings, screen, ship, aliens)
     stats = GameStats(settings)
-    btn_play_or_pause = Button(settings, screen, '开始')
+    btn_play_or_pause = Button(screen, 'PLAY')
+    score_board_now = ScoreBoard(settings, screen, stats)
 
     while True:
         gf.check_event(settings, screen, ship, bullets, aliens, stats, btn_play_or_pause)
         if stats.game_active:
             ship.update()
-            gf.update_bullets(settings, screen, ship, bullets, aliens)
+            gf.update_bullets(settings, screen, ship, bullets, aliens, stats, score_board_now)
             gf.update_aliens(settings, stats, screen, ship, bullets, aliens)
-        gf.update_screen(settings, screen, ship, bullets, aliens, stats, btn_play_or_pause)
+        gf.update_screen(settings, screen, ship, bullets, aliens, stats, btn_play_or_pause, score_board_now)
 
 
 run_game()

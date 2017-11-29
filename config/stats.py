@@ -9,12 +9,17 @@ class GameStats(object):
         self.game_active = False
         # 初始化飞船信息
         self.__init_ship()
+        self.__init_score()
 
     def __init_ship(self):
         self.ship_life = self.setting.ship_life
+
+    def __init_score(self):
+        self.score = 0
 
     def reset_stats(self):
         """重置游戏过程中可能改变的值"""
         # 初始化飞船信息
         self.__init_ship()
+        self.__init_score()
 

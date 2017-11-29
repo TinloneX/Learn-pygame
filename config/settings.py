@@ -14,6 +14,8 @@ class Settings(object):
         self.__init_bullet()
         # 初始化外星人参数
         self.__init_aliens()
+        # 设置速度加速比
+        self.speedup_scale = 1.1
 
     def __init_screen(self):
         """初始化屏幕参数"""
@@ -40,8 +42,26 @@ class Settings(object):
         self.bullet_allowed = 5
 
     def __init_aliens(self):
+        """初始化外星人属性"""
         self.alien_speed_x = 1
         self.alien_speed_y = 1
         self.alien_drop_y = 10
         self.alien_direction = 1
+        self.alien_score = 10
+
+    def reset_speed(self):
+        """重置各速度"""
+        self.__init_ship()
+        self.__init_aliens()
+        self.__init_bullet()
+
+    # noinspection PyAttributeOutsideInit
+    def increase_speed(self):
+        """提高速度设置"""
+        self.ship_speed_x *= self.speedup_scale
+        self.bullet_speed_y *= self.speedup_scale
+        self.alien_speed_y *= self.speedup_scale
+        self.alien_score = int(self.alien_score * self.speedup_scale)
+        if self.alien_drop_y <= 22:
+            self.alien_drop_y *= self.speedup_scale
 
